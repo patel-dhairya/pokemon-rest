@@ -14,11 +14,6 @@ app.secret_key = 'dhairya'
 api = Api(app)
 
 
-@app.before_first_request
-def create_table():
-    db.create_all()
-
-
 jwt = JWT(app, authenticate, identity)
 
 api.add_resource(Pokemon, '/pokemon/<string:name>')

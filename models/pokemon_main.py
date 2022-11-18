@@ -6,10 +6,12 @@ class PokemonMain(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    pokemon_type = db.Column(db.String(80))
+    pokemon_type = db.Column(db.String(15))
 
+    # Each pokemon has a trainer id even if that trainer does not exist yet
+    # Whenever trainer with that trainer id is created, all pokemons with same trainer id will become related to that
+    # trainer
     trainer_id = db.Column(db.Integer, db.ForeignKey("trainerData.id"))
-    trainer = db.relationship("TrainerMain")
 
     """Each pokemon is defined by unique name and pokemon type of pokemon """
 
@@ -23,7 +25,7 @@ class PokemonMain(db.Model):
         self.trainer_id = trainer_id
 
     def json(self):
-        return {"name": self.name, "pokemon_type": self.pokemon_type, "trainer_id": self.trainer_id}
+        return {"id": self.id, "name": self.name, "pokemon_type": self.pokemon_type, "trainer_id": self.trainer_id}
 
     @classmethod
     def find_by_name(cls, name):
@@ -31,6 +33,11 @@ class PokemonMain(db.Model):
         This function returns pokemon object of given name if it exists in pokemon database
         """
         return cls.query.filter_by(name=name).first()
+
+    @classmethod
+    def find_all(cls):
+        """ Return all pokemons object """
+        return cls.query.all()
 
     def save_to_storage(self):
         """ Insert Pokemon object to database """
@@ -41,5 +48,3 @@ class PokemonMain(db.Model):
         """ Delete Pokemon object from database """
         db.session.delete(self)
         db.session.commit()
-
-

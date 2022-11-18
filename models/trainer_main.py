@@ -7,7 +7,9 @@ class TrainerMain(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
 
-    captured_pokemons = db.relationship("PokemonMain", lazy="dynamic")
+    # Trainer is parent and all captured pokemons are children in this relationship
+    # If trainer is deleted, all pokemons connected with that trainer will also be removed from pokemon database
+    captured_pokemons = db.relationship("PokemonMain", lazy="dynamic", cascade="all, delete, delete-orphan")
 
     # Each trainer has a name
     def __init__(self, name: str):
@@ -17,7 +19,10 @@ class TrainerMain(db.Model):
         self.name = name
 
     def json(self):
-        return {"name": self.name, "captured_pokemons": [poke.json() for poke in self.captured_pokemons.all()]}
+        return {"id": self.id,
+                "name": self.name,
+                "captured_pokemons": [poke.json() for poke in self.captured_pokemons.all()]
+                }
 
     @classmethod
     def find_by_name(cls, name):
@@ -25,6 +30,11 @@ class TrainerMain(db.Model):
         This function returns trainer object of given name if it exists in trainer database
         """
         return cls.query.filter_by(name=name).first()
+
+    @classmethod
+    def find_all(cls):
+        """ Return all Trainer objects from database """
+        return cls.query.all()
 
     def save_to_storage(self):
         """ Insert trainer object to database """
@@ -35,5 +45,3 @@ class TrainerMain(db.Model):
         """ Delete trainer object from database """
         db.session.delete(self)
         db.session.commit()
-
-

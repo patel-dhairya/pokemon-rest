@@ -28,7 +28,7 @@ class RegisteredUsers(Resource):
         user.save_to_storage()
 
         # User created successfully
-        return {"message": f"User with id-{user.id} username-{user.username} registered successfully"}, 201
+        return {"message": f"User with username=>{user.username} registered successfully"}, 201
 
 
 class User(Resource):

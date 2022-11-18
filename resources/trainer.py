@@ -37,7 +37,7 @@ class Trainer(Resource):
         trainer = TrainerMain.find_by_name(name)
         if trainer:
             trainer.delete_from_storage()
-            return {"message": "Trainer deleted from trainer database"}
+            return {"message": f"Trainer {name} deleted from trainer database"}
 
         return {"message": f"Trainer {name} doesn't exist in trainer database"}
 
